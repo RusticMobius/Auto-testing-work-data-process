@@ -1,6 +1,13 @@
 import csv
 
-def label_process(file_path):
+def label_process(file_dir, file_name):
+
+  file_path = file_dir + file_name
+
+  output_file_path = "fixed-label-dir/fixed-" + file_name
+
+  write_file = open(output_file_path, "a+", encoding='utf8', newline='')
+  writer = csv.writer(write_file)
 
 
 
@@ -29,16 +36,28 @@ def label_process(file_path):
 
       print(file_compare)
       print(git_compare_url)
-      label_index = int(input("close: 1   open: 2   unknown: 3\nenter label: ")) - 1
+
+      while(True):
+        input_index = input("close: 1   open: 2   unknown: 3\nenter label: ")
+        if (input_index) == "eee":
+          return
+        try:
+          label_index = int(input_index) - 1
+          if(label_index > 2 or label_index < 0):
+            print("check your input!\n")
+            continue
+          else:
+            break
+        except:
+          print("check your input!\n")
+
       label = label_list[label_index]
+      line = [label] + spot_commit_info
+      writer.writerow(line)
       print("\n------------------- " + str(count) + "th item-----------------------\n")
 
-      write_file_path = "data-phases-1/fixed-project-summary/fixed-label-dir/" + project_name + "-fixed.csv"
-      with open(write_file_path,"a+",encoding='utf8',newline='') as write_file:
-        writer = csv.writer(write_file)
-        line = [label] + spot_commit_info
-        writer.writerow(line)
 
+  write_file.close()
 # 1. If method/file containing a warning was removed, label the warning as
 # "unknown"
 
@@ -62,4 +81,11 @@ def label_process(file_path):
 
 
 if __name__ == '__main__':
-    label_process("data-phases-1/fixed-project-summary/maven-dependency-plugin.csv")
+    # e. for file "data-phases-1/fixed-project-summary/maven-dependency-plugin.csv"
+    # --> parameter filr_dir: "data-phases-1/fixed-project-summary/"
+    # --> parameter file_name: "maven-dependency-plugin.csv"
+
+    file_dir = "data-phases-1/fixed-project-summary/"
+    file_name = "maven-dependency-plugin.csv"
+
+    label_process(file_dir, file_name)
