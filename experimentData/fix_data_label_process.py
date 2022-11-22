@@ -7,7 +7,10 @@ def label_process(file_path):
   with open(file_path) as f:
     reader = csv.reader(f)
     label_list = ["close","open","unknown"]
+    count = 0
+    # lenth = len(f.readlines())
     for row in reader:
+      count += 1;
       commits_info = row[0].split("=>")
       spot_commit_info = commits_info[0].split(":")
       fix_commit_info = commits_info[1].split(":")
@@ -28,7 +31,7 @@ def label_process(file_path):
       print(git_compare_url)
       label_index = int(input("close: 1   open: 2   unknown: 3\nenter label: ")) - 1
       label = label_list[label_index]
-      print("------------------------------------------")
+      print("\n------------------- " + str(count) + "th item-----------------------\n")
 
       write_file_path = "data-phases-1/fixed-project-summary/fixed-label-dir/" + project_name + "-fixed.csv"
       with open(write_file_path,"a+",encoding='utf8',newline='') as write_file:
@@ -36,7 +39,25 @@ def label_process(file_path):
         line = [label] + spot_commit_info
         writer.writerow(line)
 
+# 1. If method/file containing a warning was removed, label the warning as
+# "unknown"
 
+# 2. If the warning was removed, but a large amount of code was changed
+# (e.g. a refactoring of the entire class, a change in functionality),
+# label the warning as
+# "unknown".
+
+# 3. If the warning was removed, but the code is still similar to the original code,
+# and the warning/bug still appears to be present, label the warning as
+# "open"
+
+# 4. If the warning was removed, but the original code looked to be a
+# false positive, and you believe that the code was changed just to
+# silence the false alarm from findbugs/spotbugs, label the warning
+# "open"
+
+# 5. If the code appears to be automatically generated, label the  warning
+# "unknown"
 
 
 
