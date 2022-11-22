@@ -30,7 +30,7 @@ def label_process(file_path):
       label = label_list[label_index]
       print("------------------------------------------")
 
-      write_file_path = "data-phases-1/fixed-project-summary/fixed-label-dir/" + project_name + ".csv"
+      write_file_path = "data-phases-1/fixed-project-summary/fixed-label-dir/" + project_name + "-fixed.csv"
       with open(write_file_path,"a+",encoding='utf8',newline='') as write_file:
         writer = csv.writer(write_file)
         line = [label] + spot_commit_info
