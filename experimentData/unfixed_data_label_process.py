@@ -30,7 +30,7 @@ def sort_and_sampling(file_dir, file_name):
 
     for list in type_dict.values():
       # print(len(list))
-      ratio_num = math.floor(len(list) * 0.0)
+      ratio_num = math.floor(len(list) * 0.2)
       if ratio_num > 10:
         sample_num = 10
       elif ratio_num < 1:
