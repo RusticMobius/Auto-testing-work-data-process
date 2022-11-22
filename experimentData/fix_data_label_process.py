@@ -4,7 +4,7 @@ def label_process(file_dir, file_name):
 
   file_path = file_dir + file_name
 
-  output_file_path = "fixed-label-dir/fixed-" + file_name
+  output_file_path = "fixed-label-dir/label-" + file_name
 
   write_file = open(output_file_path, "a+", encoding='utf8', newline='')
   writer = csv.writer(write_file)
@@ -86,6 +86,6 @@ if __name__ == '__main__':
     # --> parameter file_name: "maven-dependency-plugin.csv"
 
     file_dir = "data-phases-1/fixed-project-summary/"
-    file_name = "maven-dependency-plugin.csv"
+    file_name = "fixed-maven-dependency-plugin.csv"
 
     label_process(file_dir, file_name)
