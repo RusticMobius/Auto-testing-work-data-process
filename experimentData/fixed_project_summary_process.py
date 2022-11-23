@@ -10,7 +10,7 @@ def create_project_summary(file_path):
       project_name = spot_commit_info[1]
       if project_name not in project_list:
         project_list.append(project_name)
-        new_file_path = "data-phases-1/fixed-project-summary/"+ project_name + ".csv"
+        new_file_path = "data-phases-1/fixed-project-summary/fixed-"+ project_name + ".csv"
         with open (new_file_path,"a") as new_file:
           writer = csv.writer(new_file)
           writer.writerow(row)
