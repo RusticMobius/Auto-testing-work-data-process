@@ -53,7 +53,7 @@ def sort_and_sampling(file_dir, file_name):
           spot_commit_id = row[2]
           waring_spot = row[-3].split("/")[-1] + " (" + row[-2] + ":" + row[-1] + ")"
           print(waring_spot)
-          github_commit_url = "https://github.com/apache/" + project_name + "/commit/" + spot_commit_id
+          github_commit_url = "https://github.com/apache/" + project_name + "/compare/" + spot_commit_id + ".." + spot_commit_id + "~1"
           print(github_commit_url)
 
           while (True):
@@ -97,5 +97,5 @@ def sort_and_sampling(file_dir, file_name):
 
 if __name__ == '__main__':
   file_dir = "data-phases-1/unfixed-project-summary/"
-  file_name = "unfixed-nutch.csv"
+  file_name = "unfixed-testdemo.csv"
   sort_and_sampling(file_dir,file_name)

@@ -32,7 +32,7 @@ def label_process(file_dir, file_name):
       fix_target_file = fix_commit_info[2].split("/")[-1]
 
       file_compare = spot_target_file + "(" + spot_commit_start_line + ":" + spot_commit_end_line + ")" + " => " + fix_target_file
-      git_compare_url = "https://github.com/apache/" + project_name + "/compare/" + spot_commit_id + ".." + fix_commit_id
+      git_compare_url = "https://github.com/apache/" + project_name + "/compare/" + fix_commit_id + ".." + spot_commit_id
 
       print(file_compare)
       print(git_compare_url)
@@ -86,6 +86,6 @@ if __name__ == '__main__':
     # --> parameter file_name: "maven-dependency-plugin.csv"
 
     file_dir = "data-phases-1/fixed-project-summary/"
-    file_name = "fixed-maven-dependency-plugin.csv"
+    file_name = "fixed-testdemo.csv"
 
     label_process(file_dir, file_name)
