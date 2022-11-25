@@ -3,7 +3,7 @@ import csv
 import random
 import math
 
-balance = False
+balance = True
 def fix_summary_process(dir_path):
   file_list = os.listdir(dir_path)
   data_list = []
