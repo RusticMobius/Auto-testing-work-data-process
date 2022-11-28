@@ -1,155 +1,189 @@
-# Readme
+# 自动化测试实验报告
 
-## 1. raw-data
+#### 项目地址—— https://github.com/RusticMobius/Auto-testing-work-data-process
 
-未标记的数据
+### 0. 组员信息
 
-导出的正报文件夹：fixed-project-summary 
-
-导出的误报文件夹：unfixed-project-summary
-
-## 2. labeled-data
-
-全标记的正报文件夹：fixed-label-dir
-
-抽样标记的误报文件夹：unfixed-label-dir
+|  姓名  |   学号    |
+| :----: | :-------: |
+| 贺思嘉 | 181250044 |
+|        |           |
+|        |           |
+|        |           |
 
 
 
-## 3. train-data
+### 1. 文件数据结构
 
-根据要求，置信学习在导出未标记的数据上执行
+#### 1.1 raw_data.zip
 
-现已生成文件夹：model-data
+- 包含使用开源项目https://github.com/lxyeah/findbugs-violations.git工具扫描得到的初始报告等
+- <img src="https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-28%2022.16.27.png" alt="截屏2022-11-28 22.16.27" style="zoom:30%;" />
+- 部分项目并没有得到扫描结果，受时间限制部分扫描出来的report没能进行tracking得到正误报，在压缩包里包含了所有扫描到的报告
+- 最终扫描得到正误报的项目共4个：nutch, maven-dependency-plugin, commons-collections, commons-imaging
 
-balanced_test, balanced_train 调整误报比例保持数据规模不要有极端偏差的文件
+#### 1.2 experimentData
 
-test, train 未调整比例
+在实验中因为收集到正报和误报数量规模差距较大，共298条正报，14000余条误报，为了探究数据规模分布对学习结果的影响我们对不同标签的数据规模进行平衡处理，处理结果对应文件文件名包含balanced
 
-数据量：正报296条，误报14543条
+- clean_data
+
+  置信学习去噪处理的数据文件
+
+- data-phases-1
+
+  扫描得到的初始数据
+
+- fixed-label-dir
+
+  正报标记结果文件
+
+- unfixed-label-dir
+
+  误报标记结果文件
+
+- model_data
+
+  置信学习使用的数据文件
+  
+- html
+
+  使用echarts实现实验结果对比可视化得到的文件
+  
+- img
+
+  比较结果图表图片
 
 
 
-## 4. 脚本
+### 2. 数据预处理
 
-#### clean.py
+#### 2.1 数据标注
 
-我写的置信学习脚本，可以执行
+警告标注工具代码及使用方式详情可见项目experimentData目录下readme文件
 
-#### fix_data_label_process.py
+- 对机器扫描得到的全部正报数据进行人工标注，共标记数据298条
 
-正报标记脚本，如果不是标记数据不需执行，进行正报标记执行
+  - 通过人工比对正报中监测到警告的commit和监测到警告修复的commit，结合标注标准进行标注
 
-- ![截屏2022-11-25 14.36.21](https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/截屏2022-11-25 14.36.21.png)
+  - fixed-label-dir目录下文件，first为第一组人工标注，second为第二组人工标注
 
-- 以testdemo为例
+- 对机器扫描得到的误报数据进行抽样标注，共标记数据512条
 
-  ![截屏2022-11-25 14.37.52](https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-25%2014.37.52.png)
+  - 通过人工比对正报中监测到警告的commit和前一次commit，结合标注标准进行标注
 
-  修改file_name为标记的文件名，记得加csv后缀
+  - unfixed-label-dir目录下文件
+  - sample-unfixed-label-dir目录下为所有抽样标注的文件
 
-  然后运行main函数
-
-  ![截屏2022-11-25 14.39.23](https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-25%2014.39.23.png)
-
-  控制台打印信息，对于正报标记，**需要点进控制台打开的链接（生成的需要比较的两次commit），比较第一行打印的文件和修改范围**
+- 为了缓解人工标注过于主观的问题，我们组不同同学对数据共进行两轮标注
 
   
 
-  **修改文件和范围在链接的上一行**
+### 3. 置信学习
 
-  ![截屏2022-11-25 14.48.01](https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-25%2014.48.01.png)
+#### 3.1 代码 clean.py
 
+#### 3.2 数据输入
+
+- model_data目录下的文件
+
+- 不对不同标签的数据规模进行平衡处理，直接输入所有的正报和误报，正报默认标签为“close”，误报默认标签为“open”，共14800余条数据
+- 对不同标签的数据进行规模平衡处理，共1700余条数据
+
+#### 3.3 分类器模型
+
+- 本实验尝试了sklearn中的三种分类模型：DecisionTreeClassifier，MultinomialNB，LogisticRegression
+
+- 由于警告数据本身的特征，缺乏语义逻辑关系，我们认为不需要过于复杂的模型
+
+
+#### 3.4 警告数据去噪
+
+- 数据去噪工具使用了开源项目cleanlab
+
+#### 3.4 关键代码
+
+- ```python
+  # 后续实验结果对比基于使用MultinomialNB得到的去噪结果
+  mnb_model = MultinomialNB()
   
-
-  进入链接
-
-  ![截屏2022-11-25 14.46.59](https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-25%2014.46.59.png)
-
+  def model_clean(model):
   
-
-  **可以通过点击changed files迅速寻找你要查看的文件**
-
-  ![截屏2022-11-25 14.47.12](https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-25%2014.47.12.png)
-
-  ![截屏2022-11-25 14.47.08](https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-25%2014.47.08.png)
-
-  进入文件，查看比较范围附近以及文件出现的修改，**然后根据作业要求里的标准来进行判断和打标签**，在控制台输入1、2、3，对应的标签有提示，回车之后**不能在脚本里修改**，请谨慎输入标签再回车，可能用到的判断标准以注释形式写在main函数上方
-
-  ![截屏2022-11-25 14.52.14](https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-25%2014.52.14.png)
-
-
-
-- **标注没有结束，请勿关闭控制台**，当然你可以修改我写的脚本来**保证中断之后文件不会写入异常导致之前的标签白打**
-
-- 如果你一定要退出但是想写入之前的标签，请在输入标签时输入三个e然后回车
-
-  - ”eee“   在fixed- label-dir生成相应文件
-
-  ![截屏2022-11-25 14.56.30](https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-25%2014.56.30.png)
-
+    num_crossval_folds = 5
+    pred_probs = cross_val_predict(model, vec_warnings, labels,
+                                   cv=num_crossval_folds, method="predict_proba")
   
-
-  标签在第一列，注意，**正报信息默认标签为close**
-
-  ![截屏2022-11-25 14.57.15](https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-25%2014.57.15.png)
-
-- #### <u>请不要直接push你标记的文件，打包发在群里</u>
-
+    loss = log_loss(labels, pred_probs)  # score to evaluate probabilistic predictions, lower values are better
+    print(f"Cross-validated estimate of log loss: {loss:.3f}")
   
-
-#### fixed_project_summary_process.py
-
-无需执行，已经执行过
-
-#### trian_data_process.py
-
-训练数据处理，无需执行，已执行过
-
-#### unfixed_data_label_process.py
-
-误报抽样标记脚本，如果不是标记数据不需执行，进行正报标记执行
-
-样本数量控制逻辑已经写好，无需手动设置
-
-- 执行前需要确认修改main函数file_name为相应文件，注意尾缀.csv，不用修改file_dir
-
-- 以unfixed-testdemo为例 
-
-  ![截屏2022-11-25 15.01.38](https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-25%2015.01.38.png)
-
-- 运行main函数后控制台开始打印信息
-
-![截屏2022-11-25 15.04.59](https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-25%2015.04.59.png)
-
-控制台打印信息，对于误报标记，**需要点进控制台打开的链接（生成的需要比较的两次commit，在误报里默认比较前一个版本的commit，因为github无法提供比较后一个版本的commit），比较第一行打印的文件和修改范围**误报的标记比较简单，一般都为open（**误报默认标签是open**）但也需要认真比较，防止出现其他情况
-
-![截屏2022-11-25 15.09.41](https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-25%2015.09.41.png)
-
-
-
-**可以通过点击changed files迅速寻找你要查看的文件**
-
-![截屏2022-11-25 15.09.55](https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-25%2015.09.55.png)
-
-
-
-
-
-- 进入文件，查看比较范围附近以及文件出现的修改，**然后根据作业要求里的标准来进行判断和打标签**，在控制台输入1、2、3，对应的标签有提示，回车之后**不能在脚本里修改**，请谨慎输入标签再回车，可能用到的判断标准以注释形式写在main函数上方
-
-- **标注没有结束，请勿关闭控制台**，当然你可以修改我写的脚本来**保证中断之后文件不会写入异常导致之前的标签白打**
-
-- 如果你一定要退出但是想写入之前的标签，请在输入标签时输入三个e然后回车
-
-  - ”eee“   在fixed- label-dir生成相应文件，这里生成两个文件，一个是包含抽样的总文件，另外一个是仅包含抽样的sample-x文件
-
-    ![截屏2022-11-25 15.08.10](https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-25%2015.08.10.png)
-
-​				
-
-![截屏2022-11-25 15.12.22](https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-25%2015.12.22.png)	
-
-- #### <u>请不要直接push你标记的文件，打包发在群里</u>
-
+    predicted_labels = pred_probs.argmax(axis=1)
   
+    # print(predicted_labels)
+  
+    acc = accuracy_score(labels, predicted_labels)
+  
+    print(f"Cross-validated estimate of accuracy on held-out data: {acc}")
+  
+    issues = CleanLearning(model).find_label_issues(vec_warnings, labels)
+  
+    print(issues)
+  
+    ranked_label_issues = find_label_issues(labels, pred_probs,
+                                            return_indices_ranked_by="self_confidence")
+  
+    print(f"Cleanlab found {len(ranked_label_issues)} label issues.")
+    print("Here are the indices of the top 15 most likely label errors:\n"
+          f"{ranked_label_issues[:15]}")
+  
+    check_issues_labels(ranked_label_issues)
+  
+  
+  ```
+
+​		<img src="https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-28%2019.02.07.png" alt="截屏2022-11-28 19.02.07" style="zoom:50%;" />
+
+​		<img src="https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-28%2019.03.17.png" alt="截屏2022-11-28 19.03.17" style="zoom:50%;" />
+
+### 4. 实验结果对比
+
+#### 4.1 正误报警告类型统计 —— open_warning_pie.html  close_warning_pie.html
+
+- 正报类型统计
+
+  ![截屏2022-11-28 17.10.10](https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-28%2017.10.10.png)
+
+- 误报类型统计
+
+  ![截屏2022-11-28 17.09.50](/Users/scarlett/Desktop/截屏2022-11-28 17.09.50.png)
+
+#### 4.2 工具标注结果与人工标注结果对比 —— open_mark_bar.html close_mark_bar.html
+
+- 正报数据标注结果对比
+
+  <img src="https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-28%2023.21.55.png" alt="截屏2022-11-28 23.21.55" style="zoom:50%;" />
+
+- 误报数据抽样标注结果对比
+
+  <img src="/Users/scarlett/Library/Application Support/typora-user-images/截屏2022-11-28 23.23.23.png" alt="截屏2022-11-28 23.23.23" style="zoom:50%;" />
+
+- 两次人工标注结果对比
+
+  - 正报标记结果
+
+    <img src="https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-28%2023.25.50.png" alt="截屏2022-11-28 23.25.50" style="zoom:50%;" />误报标记结果
+
+    <img src="https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-28%2023.24.17.png" alt="截屏2022-11-28 23.24.17" style="zoom:50%;" />
+
+#### 4.3 工具标注结果和置信学习去噪结果对比 —— clean_contrast_pie.html
+
+- <img src="https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-28%2022.11.32.png" alt="截屏2022-11-28 22.11.32" style="zoom:50%;" />
+
+#### 4.4 置信学习去噪结果和人工标记结果对比 —— clean_match_pie.html
+
+- match表示置信学习得到的噪声数据和人工标记的噪声数据重合，miss表示置信学习得到的噪声数据未被人工标记
+
+  <img src="https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/截屏2022-11-28 23.35.01.png" alt="截屏2022-11-28 23.35.01" style="zoom:50%;" />
+
+### 5. 实验结果分析
+
+从图表数据可知，基于置信学习发现的噪声数据和人工标注的噪声数据重合度较高，因此我们认为置信学习能够对现有的自动化警告标记去噪

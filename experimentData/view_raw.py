@@ -46,9 +46,6 @@ with open("model_data/train.csv",'r') as f2:
       else:
         open_raw_type[warning[0]] += 1
 
-print(open_raw_type)
-print(close_raw_type)
-
 
 def open_type_pie() -> Pie:
   c = (
