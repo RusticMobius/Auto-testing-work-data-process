@@ -13,7 +13,7 @@ from cleanlab.classification import CleanLearning
 from cleanlab.filter import find_label_issues
 import pandas as pd
 
-balance = True
+balance = False
 if balance:
   train_df = pd.read_csv("model_data/balanced_train.csv", delimiter=",", header=None,
                          names=["label", "warning"])
@@ -157,6 +157,29 @@ def check_issues_labels(ranked_label_issues):
     elif (df.label.values[i] == 'open'):
       count_open += 1
   print(f"close: {count_close}  open: {count_open}")
+
+  import csv
+
+  with open("clean_data/clean_raw_data.csv", "w", encoding='utf8', newline='') as file:
+    writer = csv.writer(file)
+    for i in range(len(df.label.values)):
+      if i in ranked_label_issues:
+        data = ["unknown",df.warning.values[i] ]
+      else:
+        data = [df.label.values[i], df.warning.values[i]]
+      writer.writerow(data)
+
+  with open("clean_data/noisy_data.csv", "w", encoding='utf8', newline='') as file:
+    writer = csv.writer(file)
+    for i in range(len(df.label.values)):
+      if i in ranked_label_issues:
+        data = [df.label.values[i],df.warning.values[i] ]
+        writer.writerow(data)
+      else:
+        continue
+
+
+
 
 if __name__ == '__main__':
   # print("test")
