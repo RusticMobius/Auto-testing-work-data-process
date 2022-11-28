@@ -17,8 +17,8 @@
 
 #### 1.1 raw_data.zip
 
-- 包含使用开源项目https://github.com/lxyeah/findbugs-violations.git工具扫描得到的初始报告等
-- <img src="https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-28%2022.16.27.png" alt="截屏2022-11-28 22.16.27" style="zoom:30%;" />
+- 包含使用开源项目 https://github.com/lxyeah/findbugs-violations.git 工具扫描得到的初始报告等
+- <img src="https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-28%2022.16.27.png" alt="截屏2022-11-28 22.16.27" style="zoom:10%;" />
 - 部分项目并没有得到扫描结果，受时间限制部分扫描出来的report没能进行tracking得到正误报，在压缩包里包含了所有扫描到的报告
 - 最终扫描得到正误报的项目共4个：nutch, maven-dependency-plugin, commons-collections, commons-imaging
 
@@ -45,11 +45,11 @@
 - model_data
 
   置信学习使用的数据文件
-  
+
 - html
 
   使用echarts实现实验结果对比可视化得到的文件
-  
+
 - img
 
   比较结果图表图片
@@ -77,7 +77,7 @@
 
 - 为了缓解人工标注过于主观的问题，我们组不同同学对数据共进行两轮标注
 
-  
+
 
 ### 3. 置信学习
 
@@ -106,38 +106,38 @@
 - ```python
   # 后续实验结果对比基于使用MultinomialNB得到的去噪结果
   mnb_model = MultinomialNB()
-  
+
   def model_clean(model):
-  
+
     num_crossval_folds = 5
     pred_probs = cross_val_predict(model, vec_warnings, labels,
                                    cv=num_crossval_folds, method="predict_proba")
-  
+
     loss = log_loss(labels, pred_probs)  # score to evaluate probabilistic predictions, lower values are better
     print(f"Cross-validated estimate of log loss: {loss:.3f}")
-  
+
     predicted_labels = pred_probs.argmax(axis=1)
-  
+
     # print(predicted_labels)
-  
+
     acc = accuracy_score(labels, predicted_labels)
-  
+
     print(f"Cross-validated estimate of accuracy on held-out data: {acc}")
-  
+
     issues = CleanLearning(model).find_label_issues(vec_warnings, labels)
-  
+
     print(issues)
-  
+
     ranked_label_issues = find_label_issues(labels, pred_probs,
                                             return_indices_ranked_by="self_confidence")
-  
+
     print(f"Cleanlab found {len(ranked_label_issues)} label issues.")
     print("Here are the indices of the top 15 most likely label errors:\n"
           f"{ranked_label_issues[:15]}")
-  
+
     check_issues_labels(ranked_label_issues)
-  
-  
+
+
   ```
 
 ​		<img src="https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-28%2019.02.07.png" alt="截屏2022-11-28 19.02.07" style="zoom:50%;" />
