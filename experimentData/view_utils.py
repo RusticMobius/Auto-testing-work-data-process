@@ -9,7 +9,7 @@ open_raw_type = {}
 
 close_raw_type = {}
 
-with open("model_data/test.csv",'r') as f1:
+with open("model_data/test.csv", 'r') as f1:
   reader = csv.reader(f1)
   for row in reader:
     # print(row)
@@ -28,7 +28,7 @@ with open("model_data/test.csv",'r') as f1:
         open_raw_type[warning[0]] += 1
 
 
-with open("model_data/train.csv",'r') as f2:
+with open("model_data/train.csv", 'r') as f2:
   reader = csv.reader(f2)
   for row in reader:
     # print(row)
@@ -67,7 +67,7 @@ def open_type_pie() -> Pie:
     )
     .set_series_opts(
       tooltip_opts=opts.TooltipOpts(
-        trigger="item", formatter="{a} <br/>{b} : {c}"
+        trigger="item", formatter="{a} <br/>{b} : {c}  ({d}%)"
       )
     )
   )
@@ -93,7 +93,7 @@ def close_type_pie() -> Pie:
     )
     .set_series_opts(
       tooltip_opts=opts.TooltipOpts(
-        trigger="item", formatter="{a} <br/>{b} : {c}"
+        trigger="item", formatter="{a} <br/>{b} : {c} ({d}%)"
       )
     )
   )
@@ -113,12 +113,12 @@ open_marked_second = {"close":0, "open":0, "unknown":0}
 noisy_balanced_data = {"close":0,"open":0,"unknown":0}
 noisy_data = {"close":0,"open":0,"unknown":0}
 
-noisy_f = open("clean_data/noisy_data.csv",'r')
+noisy_f = open("clean_data/noisy_data.csv", 'r')
 reader_nf = csv.reader(noisy_f)
 nf_list = [x for x in reader_nf]
 noisy_f.close()
 
-noisy_bf = open("clean_data/noisy_balanced_data.csv",'r')
+noisy_bf = open("clean_data/noisy_balanced_data.csv", 'r')
 reader_nbf = csv.reader(noisy_bf)
 nbf_list = [x for x in reader_nbf]
 noisy_bf.close()
@@ -153,30 +153,32 @@ def check_nbf(row):
       continue
   # nbf_analyze["miss"] += 1
 
+check_count = 0
 with open("fixed-label-dir/fixed_label_combo.csv") as f0:
   reader = csv.reader(f0)
   for row in reader:
-    if row[0] != "close":
+    if row[0] != "close" :
+      check_count += 1
       check_nf(row)
       check_nbf(row)
+print(check_count)
 
-
-with open("fixed-label-dir/first_fixed_label.csv",'r') as f3:
+with open("fixed-label-dir/first_fixed_label.csv", 'r') as f3:
   reader = csv.reader(f3)
   for row in reader:
     if row[0] == "close":
       close_marked_first["close"] += 1
     elif row[0] == "open":
       close_marked_first["open"] += 1
-      check_nf(row)
-      check_nbf(row)
+      # check_nf(row)
+      # check_nbf(row)
     elif row[0] == "unknown":
       close_marked_first["unknown"] += 1
-      check_nf(row)
-      check_nbf(row)
+      # check_nf(row)
+      # check_nbf(row)
 
 
-with open("fixed-label-dir/second_fixed_label.csv",'r') as f4:
+with open("fixed-label-dir/second_fixed_label.csv", 'r') as f4:
   reader = csv.reader(f4)
   for row in reader:
     if row[0] == "close":
@@ -186,13 +188,14 @@ with open("fixed-label-dir/second_fixed_label.csv",'r') as f4:
     elif row[0] == "unknown":
       close_marked_second["unknown"] += 1
 
-with open("data-phases-1/fixed-alarms.csv",'r') as f5:
+with open("data-phases-1/fixed-alarms.csv", 'r') as f5:
   reader = csv.reader(f5)
   for row in reader:
     close_raw_mark["close"] += 1
 
 
-with open("unfixed-label-dir/sample-unfixed-label-dir/first_unfixed_sample_label.csv",'r') as f6:
+with open(
+  "unfixed-label-dir/sample-unfixed-label-dir/first_unfixed_sample_label.csv", 'r') as f6:
   reader = csv.reader(f6)
   for row in reader:
     if row[0] == "close":
@@ -204,7 +207,8 @@ with open("unfixed-label-dir/sample-unfixed-label-dir/first_unfixed_sample_label
 
     open_raw_mark["open"] += 1
 
-with open("unfixed-label-dir/sample-unfixed-label-dir/second_unfixed_sample_label.csv",'r') as f7:
+with open(
+  "unfixed-label-dir/sample-unfixed-label-dir/second_unfixed_sample_label.csv", 'r') as f7:
   reader = csv.reader(f7)
   for row in reader:
     if row[0] == "close":
@@ -225,7 +229,7 @@ nbf_analyze["miss"] = len(nbf_list) - nbf_analyze["match"]
 clean_contrast = {"noisy":0,"healthy":0}
 clean_balanced_contrast = {"noisy":0,"healthy":0}
 
-with open("clean_data/clean_raw_data.csv",'r') as f8:
+with open("clean_data/clean_raw_data.csv", 'r') as f8:
   reader = csv.reader(f8)
   for row in reader:
     if row[0] == "unknown":
@@ -233,7 +237,7 @@ with open("clean_data/clean_raw_data.csv",'r') as f8:
     else:
       clean_contrast["healthy"] += 1
 
-with open("clean_data/clean_raw_balanced_data.csv",'r') as f9:
+with open("clean_data/clean_raw_balanced_data.csv", 'r') as f9:
   reader = csv.reader(f9)
   for row in reader:
     if row[0] == "unknown":
@@ -260,6 +264,7 @@ def clean_contrast_pie() -> Pie:
                  zip(clean_contrast.keys(), clean_contrast.values())],
       label_opts=opts.LabelOpts(is_show=True,
                                 # position="center"),
+                                formatter="{b} : {c} ({d}%)",
                                 font_size=24
                                 )
     )
@@ -277,7 +282,7 @@ def clean_contrast_pie() -> Pie:
     )
       .set_series_opts(
       tooltip_opts=opts.TooltipOpts(
-        trigger="item", formatter="{b} : {c}"
+        trigger="item", formatter="{b} : {c} ({d}%)"
       )
     )
   )
@@ -295,6 +300,7 @@ def clean_balanced_contrast_pie() -> Pie:
                  zip(clean_balanced_contrast.keys(), clean_balanced_contrast.values())],
       label_opts=opts.LabelOpts(is_show=True,
                                 # position="center"),
+                                formatter="{b} : {c} ({d}%)",
                                 font_size=24
                                 )
     )
@@ -331,6 +337,7 @@ def nf_match_pie() -> Pie:
                  zip(nf_analyze.keys(), nf_analyze.values())],
       label_opts=opts.LabelOpts(is_show=True,
                                 # position="center"),
+                                formatter="{b} : {c} ({d}%)",
                                 font_size=24
                                 )
     )
@@ -366,6 +373,7 @@ def nbf_match_pie() -> Pie:
                  zip(nbf_analyze.keys(), nbf_analyze.values())],
       label_opts=opts.LabelOpts(is_show=True,
                                 # position="center"),
+                                formatter="{b} : {c} ({d}%)",
                                 font_size=24
                                 )
     )
@@ -401,7 +409,7 @@ def close_mark_bar() -> Bar:
     .add_yaxis("人工标注第二组",[x for x in close_marked_second.values()])
     .set_global_opts(
       xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(font_size = 26)),
-      yaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(font_size = 16)),
+      yaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(font_size = 20)),
       legend_opts=opts.LegendOpts(orient="horizontal",
                                   is_show=True,
                                   item_gap = 50,
@@ -415,6 +423,7 @@ def close_mark_bar() -> Bar:
                                 )
 
     )
+    .set_series_opts(label_opts=opts.LabelOpts(font_size=26))
   )
   return b
 
@@ -430,7 +439,7 @@ def open_mark_bar() -> Bar:
     .add_yaxis("人工标注第二组",[x for x in open_marked_second.values()])
     .set_global_opts(
       xaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(font_size=26)),
-      yaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(font_size=16)),
+      yaxis_opts=opts.AxisOpts(axislabel_opts=opts.LabelOpts(font_size=20)),
       legend_opts=opts.LegendOpts(orient="horizontal",
                                   is_show=True,
                                   item_gap=50,
@@ -442,6 +451,7 @@ def open_mark_bar() -> Bar:
       title_opts=opts.TitleOpts(title="误报标记对比图", pos_left="50px"),
 
     )
+    .set_series_opts(label_opts=opts.LabelOpts(font_size=26))
 
   )
 
@@ -457,8 +467,8 @@ open_mark_bar().render("../html/open_mark_bar.html")
 
 page1 = Page()
 page1.add(nf_match_pie(),nbf_match_pie())
-page1.render("clean_match_pie.html")
+page1.render("../html/clean_match_pie.html")
 
 page2 = Page()
 page2.add(clean_contrast_pie(),clean_balanced_contrast_pie())
-page2.render("clean_contrast_pie.html")
+page2.render("../html/clean_contrast_pie.html")
