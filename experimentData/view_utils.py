@@ -153,15 +153,20 @@ def check_nbf(row):
       continue
   # nbf_analyze["miss"] += 1
 
-check_count = 0
+
 with open("fixed-label-dir/fixed_label_combo.csv") as f0:
   reader = csv.reader(f0)
   for row in reader:
     if row[0] != "close" :
-      check_count += 1
       check_nf(row)
       check_nbf(row)
-print(check_count)
+
+
+def process_line(row):
+  row.remove(row[2])
+  data = [row[0]," ".join(row[1:])]
+  return data
+
 
 with open("fixed-label-dir/first_fixed_label.csv", 'r') as f3:
   reader = csv.reader(f3)
@@ -170,13 +175,13 @@ with open("fixed-label-dir/first_fixed_label.csv", 'r') as f3:
       close_marked_first["close"] += 1
     elif row[0] == "open":
       close_marked_first["open"] += 1
-      # check_nf(row)
-      # check_nbf(row)
+      # check_nf(process_line(row))
+      # check_nbf(process_line(row))
+
     elif row[0] == "unknown":
       close_marked_first["unknown"] += 1
-      # check_nf(row)
-      # check_nbf(row)
-
+      # check_nf(process_line(row))
+      # check_nbf(process_line(row))
 
 with open("fixed-label-dir/second_fixed_label.csv", 'r') as f4:
   reader = csv.reader(f4)
@@ -185,8 +190,12 @@ with open("fixed-label-dir/second_fixed_label.csv", 'r') as f4:
       close_marked_second["close"] += 1
     elif row[0] == "open":
       close_marked_second["open"] += 1
+      # check_nf(process_line(row))
+      # check_nbf(process_line(row))
     elif row[0] == "unknown":
       close_marked_second["unknown"] += 1
+      # check_nf(process_line(row))
+      # check_nbf(process_line(row))
 
 with open("data-phases-1/fixed-alarms.csv", 'r') as f5:
   reader = csv.reader(f5)

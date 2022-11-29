@@ -206,6 +206,20 @@
 
 #### 4.4 置信学习去噪结果和人工标记结果对比 —— clean_match_pie.html
 
+- 置信学习去噪结果和第一组人工标记结果对比
+
+  
+
+  <img src="https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-29%2016.24.13.png" alt="截屏2022-11-29 16.24.13" style="zoom:50%;" />
+
+  
+
+- 置信学习去噪结果和第二组人工标记结果对比
+
+  
+
+  <img src="https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-29%2016.26.24.png" alt="截屏2022-11-29 16.26.24" style="zoom:50%;" />
+
 - 通过结合第一组人工标注与第二组人工标注结果得到用于比对的人工标注数据集，match表示置信学习得到的噪声数据和人工标记的噪声数据重合，miss表示置信学习得到的噪声数据未被人工标记
 
   <img src="https://raw.githubusercontent.com/RusticMobius/MyPicGo/main/%E6%88%AA%E5%B1%8F2022-11-29%2015.39.54.png" alt="截屏2022-11-29 15.39.54" style="zoom:50%;" />
